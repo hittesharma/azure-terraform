@@ -3,6 +3,12 @@
 # You can find a complete list of Azure resources supported by Terraform here:
 # https://www.terraform.io/docs/providers/azurerm/
 
+
+#IMPORTANT Additional step
+#Create a file in same directory terraform.tfvars and put following keys with unique values (different from here)
+#prefix = "hiteshApp"
+#hostname = "hiteshApp"
+
 provider "azurerm" {
   # whilst the `version` attribute is optional, we recommend pinning to a given version of the Provider
   version = ">=2.0.0"
