@@ -1,18 +1,14 @@
 ##############################################################################
-# * HashiCorp Beginner's Guide to Using Terraform on Azure
-# 
-# This Terraform configuration will create the following:
-#
-# Resource group with a virtual network and subnet
-# An Ubuntu Linux server running Apache
-
-##############################################################################
-# * Shared infrastructure resources
-
-# First we'll create a resource group. In Azure every resource belongs to a 
-# resource group. Think of it as a container to hold all your resources. 
+# It has been modified by Hitesh for Terraform v0.12.23 to work in Azure
 # You can find a complete list of Azure resources supported by Terraform here:
 # https://www.terraform.io/docs/providers/azurerm/
+
+provider "azurerm" {
+  # whilst the `version` attribute is optional, we recommend pinning to a given version of the Provider
+  version = ">=2.0.0"
+  features {}
+}
+
 resource "azurerm_resource_group" "tf_azure_guide" {
   name     = "${var.resource_group}"
   location = "${var.location}"
@@ -89,7 +85,6 @@ resource "azurerm_network_interface" "tf-guide-nic" {
   name                      = "${var.prefix}tf-guide-nic"
   location                  = "${var.location}"
   resource_group_name       = "${azurerm_resource_group.tf_azure_guide.name}"
-  network_security_group_id = "${azurerm_network_security_group.tf-guide-sg.id}"
 
   ip_configuration {
     name                          = "${var.prefix}ipconfig"
@@ -106,7 +101,7 @@ resource "azurerm_public_ip" "tf-guide-pip" {
   name                         = "${var.prefix}-ip"
   location                     = "${var.location}"
   resource_group_name          = "${azurerm_resource_group.tf_azure_guide.name}"
-  public_ip_address_allocation = "Dynamic"
+  allocation_method            = "Dynamic"
   domain_name_label            = "${var.hostname}"
 }
 
@@ -175,55 +170,3 @@ resource "azurerm_virtual_machine" "site" {
     }
   }
 }
-
-##############################################################################
-# * Azure MySQL Database
-
-# Terraform can build any type of infrastructure, not just virtual machines. 
-# Azure offers managed MySQL database servers and a whole host of other 
-# resources. Each resource is documented with all the available settings:
-# https://www.terraform.io/docs/providers/azurerm/r/mysql_server.html
-
-# Uncomment the code below to add a MySQL server to your resource group.
-
-# resource "azurerm_mysql_server" "mysql" {
-#   name                = "${var.mysql_hostname}"
-#   location            = "${azurerm_resource_group.tf_azure_guide.location}"
-#   resource_group_name = "${azurerm_resource_group.tf_azure_guide.name}"
-#   ssl_enforcement     = "Disabled"
-
-#   sku {
-#     name     = "MYSQLB50"
-#     capacity = 50
-#     tier     = "Basic"
-#   }
-
-#   administrator_login          = "mysqladmin"
-#   administrator_login_password = "Everything-is-bananas-010101"
-#   version                      = "5.7"
-#   storage_mb                   = "51200"
-#   ssl_enforcement              = "Disabled"
-# }
-
-# # This is a sample database that we'll populate with the MySQL sample data
-# # set provided here: https://github.com/datacharmer/test_db. With Terraform,
-# # everything is Infrastructure as Code. No more manual steps, aging runbooks,
-# # tribal knowledge or outdated wiki instructions. Terraform is your executable
-# # documentation, and it will build infrastructure correctly every time.
-# resource "azurerm_mysql_database" "employees" {
-#   name                = "employees"
-#   resource_group_name = "${azurerm_resource_group.tf_azure_guide.name}"
-#   server_name         = "${azurerm_mysql_server.mysql.name}"
-#   charset             = "utf8"
-#   collation           = "utf8_unicode_ci"
-# }
-
-# # This firewall rule allows database connections from anywhere and is suited
-# # for demo environments. Don't do this in production. 
-# resource "azurerm_mysql_firewall_rule" "demo" {
-#   name                = "tf-guide-demo"
-#   resource_group_name = "${azurerm_resource_group.tf_azure_guide.name}"
-#   server_name         = "${azurerm_mysql_server.mysql.name}"
-#   start_ip_address    = "0.0.0.0"
-#   end_ip_address      = "0.0.0.0"
-# }
