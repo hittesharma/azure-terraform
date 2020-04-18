@@ -1,6 +1,7 @@
 ##############################################################################
 # * HashiCorp Beginner's Guide to Using Terraform on Azure
 # 
+# OLD TERRAFORM THAT HARDLY WORKS SEE THE MODIFIED VERSION BY HITESH inside directory
 # This Terraform configuration will create the following:
 #
 # Resource group with a virtual network and subnet
